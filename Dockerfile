@@ -10,8 +10,8 @@ RUN cpanm App::cpm
 # Install the Starman
 RUN cpm install -g Starman
 
-# Open the default port of it
-EXPOSE 5000
+# Open the default port of it (for Google App Engine which requires 8080)
+EXPOSE 8080
 
 #----------------------------------------
 # add minor deps before YATT::Lite
@@ -44,4 +44,4 @@ RUN cpanm File::AddInc
 
 #----------------------------------------
 
-CMD ["starman"]
+CMD ["starman", "--port=8080"]
