@@ -1,10 +1,14 @@
-# YATT::Lite + Perl Custom Runtime for App Engine
+# YATT::Lite + Perl Custom Runtime for Google App Engine Flexible Environment
 
-Simple starting point to running YATT::Lite on [Google App Engine](https://cloud.google.com/appengine).
+A simple starting point to running YATT::Lite on [Google App Engine](https://cloud.google.com/appengine).
 
-1. Just clone this repo. Optionally change git branche of lib/YATT git submodule.
+Note: This sample assumes you install latest YATT::Lite under `lib/YATT` as a git submodule.
 
-2. Edit public/index.yatt, ytmpl/layout.ytmpl and lib/MyBackend.pm as you wish.
+1. Just clone this repo.
+
+2. `git submodule update --init`. You may optionally change git branch of lib/YATT git submodule.
+
+2. Edit public/index.yatt, ytmpl/layout.ytmpl, and lib/MyBackend.pm as you wish.
 
 3. You already have an `app.yaml` in the root of your application with the following contents:
 
