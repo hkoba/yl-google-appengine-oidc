@@ -1,0 +1,3 @@
+[submodule "lib/YATT"]
+	path = lib/YATT
+	url = ../yatt_lite
