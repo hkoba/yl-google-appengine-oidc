@@ -1,6 +1,3 @@
 [submodule "lib/YATT"]
 	path = lib/YATT
 	url = ../yatt_lite
-[submodule "lib/MOP4Import"]
-	path = lib/MOP4Import
-	url = ../perl-mop4import-declare.git
