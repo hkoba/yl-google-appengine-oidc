@@ -21,6 +21,10 @@ RUN cpm install -g Test::Kantan
 
 #----------------------------------------
 
+RUN cpm install -g MOP4Import::Declare
+
+#----------------------------------------
+
 # add your application code and set the working directory
 ADD . /app
 WORKDIR /app
@@ -28,10 +32,7 @@ WORKDIR /app
 #----------------------------------------
 
 # since latest YATT::Lite is not yet released on CPAN, we neeed to do this.
-RUN cpm install -g --cpanfile=/app/lib/YATT/cpanfile
-
-# MOP4Import too
-RUN cpm install -g --cpanfile=/app/lib/MOP4Import/cpanfile
+RUN cpm install -g --cpanfile=/app/lib/YATT/cpanfile --with-recommends
 
 #----------------------------------------
 
