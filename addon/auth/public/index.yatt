@@ -1,0 +1,22 @@
+<!yatt:args nx>
+<yatt:layout>
+  <h2>Please login</h2>
+
+  <form>
+
+    <button type="submit" name="!login">
+      ダミーでログイン
+    </button>
+
+    &yatt:mkhidden(nx);
+
+  </form>
+
+</yatt:layout>
+
+<!yatt:action login nx>
+
+$this->entity_session->{login} = 'yes';
+
+$CON->redirect($nx);
+
