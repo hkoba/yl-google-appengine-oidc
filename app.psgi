@@ -12,7 +12,11 @@ use Plack::Builder;
 
 use YATT::Lite::WebMVC0::SiteApp -as_base;
 use YATT::Lite qw/Entity *CON/;
-# use YATT::Lite::WebMVC0::Partial::Session2 -as_base;
+use YATT::Lite::WebMVC0::Partial::Session2 -as_base;
+
+use Plack::Session::State::Cookie;
+use Plack::Session::Store::Cache;
+use CHI;
 
 {
   my $app_root = $FindBin::Bin;
@@ -22,6 +26,7 @@ use YATT::Lite qw/Entity *CON/;
     doc_root => "$app_root/public",
     use_sibling_config_dir => 1,
     # config_dir => "$app_root.config.d",
+    session_store => [Cache => cache => CHI->new(driver => 'Memory', global => 1)],
   );
 
   if (-d (my $staticDir = "$app_root/static")) {

@@ -1,3 +1,17 @@
 <yatt:layout>
   <h2>Hello!</h2>
+
+  <form >
+    <input name=".foo" value="&yatt:psgix_session{foo};">
+    <button type="submit" name="!foo">
+      登録
+    </button>
+  </form>
+
 </yatt:layout>
+
+<!yatt:action foo>
+
+$this->entity_psgix_session->{'foo'} = $CON->param('.foo');
+
+$this->render_($CON);
