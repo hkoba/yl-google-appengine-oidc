@@ -1,0 +1,15 @@
+use strict;
+
+return sub {
+  my ($this, $CON) = @_;
+  $this->entity_session_start();
+
+  my $oidc = $this->entity_oidc;
+  my $session = $this->entity_psgix_session;
+
+  $oidc->set_provider_access_token($session, undef);
+
+  my $nx = $CON->param('nx');
+
+  $CON->redirect($nx || "./");
+};

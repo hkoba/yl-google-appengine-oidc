@@ -55,6 +55,10 @@
 
 &yatt:oidc:set_provider_access_token(:psgix_session(),:token);
 
+<?perl
+ $this->entity_psgix_session->{login} = 'ok';
+ ?>
+
 <yatt:layout>
 
   <h2>Access token</h2>
@@ -87,7 +91,7 @@
     token=(&yatt:token;)
   </yatt:if>
     
-  <a href="./">top</a>
+  <a href="&yatt:script_name;/">top</a>
     
 </yatt:layout>
 
