@@ -55,34 +55,6 @@
 
 &yatt:oidc:set_provider_access_token(:psgix_session(),:token);
 
-<yatt:my jump:value="&yatt:oidc:peek_callback_target(:psgix_session());"/>
-<yatt:if "&yatt:jump;">
-
-  <yatt:if "&yatt:jump{userinfo};">
-    <!--#yatt One more communication -->
-    
-    <yatt:my [userinfo:value err2:value]="&yatt:oidc:get_userinfo(:psgix_session(),:jump{userinfo});"/>
-
-    <yatt:return if="&yatt:err2;">
-      <yatt:my [ecode etext]="&yatt:lexpand(:err);"/>
-      <yatt:error>
-        Can't get userinfo
-        code: &yatt:ecode;<br>
-        <p>
-          &yatt:etext;
-        </p>
-      </yatt:error>
-    </yatt:return>
-    
-    &yatt:oidc:set_provider_userinfo(:psgix_session(),:userinfo);
-
-  <:yatt:else/>
-    &yatt:oidc:set_provider_userinfo(:psgix_session(),=undef);
-  </yatt:if>
-
-  &yatt:redirect(:jump{ok});
-</yatt:if>
-
 <yatt:layout>
 
   <h2>Access token</h2>
