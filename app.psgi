@@ -21,11 +21,16 @@ use YATT::Lite qw/Entity *CON/;
     $0,
     doc_root => "$app_root/public",
     use_sibling_config_dir => 1,
-    config_dir => "$app_root.config.d",
+    # config_dir => "$app_root.config.d",
   );
 
   if (-d (my $staticDir = "$app_root/static")) {
     $site->mount_static("/static" => $staticDir);
+  }
+
+  # Emulate //metadata/metadata if it exists under config_dir
+  if (-d (my $metadata_dir = ($site->config_dir . "/metadata"))) {
+    $site->mount_static("/metadata" => $metadata_dir);
   }
 
   # Define entities here.
