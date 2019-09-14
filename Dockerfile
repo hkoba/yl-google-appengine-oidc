@@ -14,14 +14,10 @@ RUN cpm install -g Starman
 EXPOSE 8080
 
 #----------------------------------------
-# add minor deps before YATT::Lite
+# add deps before YATT::Lite
 
-RUN cpm install -g JSON::MaybeXS Cpanel::JSON::XS
-RUN cpm install -g Test::Kantan
-
-#----------------------------------------
-
-RUN cpm install -g MOP4Import::Declare
+RUN cpm install -g --with-recommends --with-suggests \
+    MOP4Import::Declare Test::Requires
 
 #----------------------------------------
 
@@ -33,15 +29,6 @@ WORKDIR /app
 
 # since latest YATT::Lite is not yet released on CPAN, we neeed to do this.
 RUN cpm install -g --cpanfile=/app/lib/YATT/cpanfile --with-recommends
-
-#----------------------------------------
-
-# add optional sibling config directory outside from this repo
-RUN mkdir /app.config.d
-VOLUME /app.config.d
-
-# just to help writing runnable modules
-RUN cpanm File::AddInc
 
 #----------------------------------------
 
