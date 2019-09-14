@@ -35,7 +35,7 @@ use CHI;
 
   # Emulate //metadata/metadata if it exists under config_dir
   if (-d (my $metadata_dir = ($site->config_dir . "/metadata"))) {
-    $site->mount_static("/metadata" => $metadata_dir);
+    $site->mount_static("/computeMetadata" => $metadata_dir);
   }
 
   # Define entities here.

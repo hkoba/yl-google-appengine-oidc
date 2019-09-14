@@ -1,0 +1,13 @@
+use strict;
+
+return sub {
+  my ($this, $CON) = @_;
+
+  my $oidc = $this->entity_oidc;
+
+  # $this->raise_dump([redirect_uri => $oidc->redirect_uri]);
+
+  my $session = $this->entity_psgix_session;
+  my $url = $oidc->url_to_authorization($session);
+  $CON->redirect(\$url); # For external redirect.
+};

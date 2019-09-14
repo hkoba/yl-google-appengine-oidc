@@ -1,0 +1,133 @@
+<!yatt:args state code authuser prompt session_state error
+            error_description
+            >
+&yatt:session_start();
+<yatt:my oidc:value="&yatt:oidc();"
+         session:value="&yatt:psgix_session();"
+         err:value="undef"
+         />
+
+<yatt:return if="$err = $oidc->verify_state_with_session($state, $session)">
+  <yatt:error>state mismatch!</yatt:error>
+</yatt:return>
+
+<yatt:return if="&yatt:error;">
+  &yatt:oidc:set_provider_error(:session,:error,:error_description);
+  <yatt:my jump:value="&yatt:oidc:peek_callback_target(:psgix_session());"/>
+  <yatt:if "&yatt:jump;">
+    <yatt:my target:value="&yatt:default(:jump{error},:jump{ng});"/>
+    <yatt:if "&yatt:target;">
+      &yatt:redirect(:target);
+      <:yatt:else/>
+      <yatt:error>
+        <h2>&yatt:error;</h2>
+        &yatt:error_description;
+      </yatt:error>
+    </yatt:if>
+  </yatt:if>
+</yatt:return>
+
+<yatt:my nocode_action="&yatt:oidc:callback_nocode_action(:psgix_session());"/>
+<yatt:if "&yatt:nocode_action; and not $code">
+  &yatt:redirect(:nocode_action);
+</yatt:if>
+
+<yatt:return if="not $code">
+  <yatt:error>
+    The code parameter is missing
+  </yatt:error>
+</yatt:return>
+
+<yatt:my [client:value token:value]="&yatt:oidc:get_access_client_token(:code);"/>
+  
+<yatt:my res:value="&yatt:client:last_response();"
+         request_body:value="&yatt:res:request():content();"/>
+
+<yatt:return if="not $token">
+  <yatt:error code content=request_body>Failed to get access token response.
+    <yatt:if "&yatt:res:content_type(); eq 'application/json'">
+      <yatt:my json:value="JSON::decode_json(&yatt:res:decoded_content();)"/>
+      <p>&yatt:json{error_description};</p>
+    </yatt:if>
+    <!--&yatt:res;-->
+  </yatt:error>
+</yatt:return>
+
+&yatt:oidc:set_provider_access_token(:psgix_session(),:token);
+
+<yatt:my jump:value="&yatt:oidc:peek_callback_target(:psgix_session());"/>
+<yatt:if "&yatt:jump;">
+
+  <yatt:if "&yatt:jump{userinfo};">
+    <!--#yatt One more communication -->
+    
+    <yatt:my [userinfo:value err2:value]="&yatt:oidc:get_userinfo(:psgix_session(),:jump{userinfo});"/>
+
+    <yatt:return if="&yatt:err2;">
+      <yatt:my [ecode etext]="&yatt:lexpand(:err);"/>
+      <yatt:error>
+        Can't get userinfo
+        code: &yatt:ecode;<br>
+        <p>
+          &yatt:etext;
+        </p>
+      </yatt:error>
+    </yatt:return>
+    
+    &yatt:oidc:set_provider_userinfo(:psgix_session(),:userinfo);
+
+  <:yatt:else/>
+    &yatt:oidc:set_provider_userinfo(:psgix_session(),=undef);
+  </yatt:if>
+
+  &yatt:redirect(:jump{ok});
+</yatt:if>
+
+<yatt:layout>
+
+  <h2>Access token</h2>
+
+  &yatt:oidc:get_provider_access_token(:psgix_session());
+
+  <dl>
+    <yatt:foreach my=meth list="qw/access_token refresh_token expires_in/">
+      <dt>&yatt:meth;</dt>
+      <dd><yatt:my fun:value="UNIVERSAL::can($token, $meth)"/>
+        <yatt:if "&yatt:fun;">
+          <?perl= $fun->($token)?>
+          <:yatt:else/>
+          (missing)
+        </yatt:if>
+      </dd>
+    </yatt:foreach>
+  </dl>
+
+  <h2>id_token</h2>
+  <yatt:my id_token:value="&yatt:oidc:parse_id_token(:token:id_token());"/>
+  <yatt:if "&yatt:id_token;">
+    <dl>
+      <dt>header</dt><dd>&yatt:id_token:header();</dd>
+      <dt>payload</dt><dd>&yatt:id_token:payload();</dd>
+      <dt>token_string</dt><dd>&yatt:id_token:token_string();</dd>
+    </dl>
+    <:yatt:else/>
+    id_token is empty.
+    token=(&yatt:token;)
+  </yatt:if>
+    
+  <a href="./">top</a>
+    
+</yatt:layout>
+
+<!yatt:widget error msg code content request>
+
+<yatt:layout>
+<h2>&yatt:msg;</h2>
+<pre>&yatt:content;</pre>
+<pre>&yatt:request;</pre>
+<yatt:body/>
+</yatt:layout>
+
+<!yatt:widget authorized info>
+<h2>Authorized!</h2>
+&yatt:info;
