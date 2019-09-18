@@ -28,8 +28,6 @@ use YATT_Helper::OIDC::Session qw/
                         AccessToken
                       /;
 
-use JSON qw/encode_json decode_json/;
-
 use OIDC::Lite::Client::WebServer;
 use OIDC::Lite::Model::IDToken;
 use HTTP::Request ();
@@ -146,7 +144,7 @@ sub get_userinfo {
   if (not $uinfo_res->is_success) {
     (undef, [$uinfo_res->code, $uinfo_res->content]);
   } elsif ($filter) {
-    my $json = decode_json($uinfo_res->content);
+    my $json = $self->cli_decode_json($uinfo_res->content);
     $self->filter_json_by($filter, $json)
   } else {
     ($uinfo_res->content)
