@@ -23,7 +23,7 @@ use Redis::Fast;
 {
   my $app_root = $FindBin::Bin;
   my $config_dir = "$app_root.config.d";
-  my $metadata = Metadata->new(mock_dir => "$config_dir/metadata");
+  my $metadata = Metadata->instance(mock_dir => "$config_dir/metadata");
 
   my MY $site = MY->load_factory_for_psgi(
     $0,

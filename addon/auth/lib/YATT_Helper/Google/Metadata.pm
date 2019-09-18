@@ -16,6 +16,11 @@ use MOP4Import::Base::CLI_JSON -as_base,
 use Furl;
 use IO::Socket::SSL;
 
+our $instance;
+sub instance {
+  $instance //= shift->new(@_);
+}
+
 sub onconfigure_mock_dir {
   (my MY $self, my $mock_dir) = @_;
   return unless -d $mock_dir;
