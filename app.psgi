@@ -14,34 +14,29 @@ use YATT::Lite::WebMVC0::SiteApp -as_base;
 use YATT::Lite qw/Entity *CON/;
 use YATT::Lite::WebMVC0::Partial::Session2 -as_base;
 
+use YATT_Helper::Google::Metadata [as => 'Metadata'];
+
 use Plack::Session::State::Cookie;
-use Plack::Session::Store::DBI;
-use DBI;
+use Plack::Session::Store::RedisFast;
+use Redis::Fast;
 
 {
   my $app_root = $FindBin::Bin;
+  my $config_dir = "$app_root.config.d";
+  my $metadata = Metadata->new(mock_dir => "$config_dir/metadata");
 
   my MY $site = MY->load_factory_for_psgi(
     $0,
     doc_root => "$app_root/public",
     use_sibling_config_dir => 1,
     # config_dir => "$app_root.config.d",
-    session_store => [DBI => get_dbh => sub {
-      my $dbFn = "$app_root/var/db/site.db";
-      unless (-w $dbFn) {
-        Carp::croak "Can't find db";
-      }
-      DBI->connect("dbi:SQLite:dbname=$dbFn");
-    }],
+    session_store => [RedisFast => redis => Redis::Fast->new(
+      server => $metadata->attribute("session_redis"),
+    )],
   );
 
   if (-d (my $staticDir = "$app_root/static")) {
     $site->mount_static("/static" => $staticDir);
-  }
-
-  # Emulate //metadata/metadata if it exists under config_dir
-  if (-d (my $metadata_dir = ($site->config_dir . "/metadata"))) {
-    $site->mount_static("/computeMetadata" => $metadata_dir);
   }
 
   # Define entities here.
