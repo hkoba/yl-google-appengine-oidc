@@ -21,20 +21,26 @@ sub _import_entns {
   push @$isa, $pack."::EntNS";
 }
 
-Entity metadata => sub {
-  my ($this, $name) = @_;
-  $CON->stash->{metadata}{$name} //= do {
-    my $text = Metadata->instance->attribute($name);
-    $text =~ s/\s*\z//;
-    $text;
+foreach my $name (qw(admin oauth_client_id oauth_client_secret)) {
+  my $entName = "project_$name";
+  Entity $entName => sub {
+    shift->entity_metadata($name, @_);
   };
+}
+
+Entity metadata => sub {
+  my ($this, $name, @default) = @_;
+  defined (my $text = Metadata->instance->project_attribute($name, @default))
+    or return '';
+  $text =~ s/\s*\z//;
+  $text;
 };
 
 Entity oidc => sub {
   my ($this) = @_;
   $CON->stash->{oidc} //= do {
-    my $client_id = $this->entity_metadata('client_id');
-    my $client_secret = $this->entity_metadata('client_secret');
+    my $client_id = $this->entity_project_client_id;
+    my $client_secret = $this->entity_project_client_secret;
     YATT_Helper::OIDC::Provider::Google->new(
       client_id => $client_id,
       client_secret => $client_secret,
@@ -43,6 +49,5 @@ Entity oidc => sub {
     )
   };
 };
-
 
 1;

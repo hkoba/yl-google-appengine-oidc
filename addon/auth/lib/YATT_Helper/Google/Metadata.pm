@@ -28,30 +28,44 @@ sub onconfigure_mock_dir {
   $self->{mock_dir} = $mock_dir;
 }
 
-sub attribute {
-  (my MY $self, my $attName) = @_;
-  $self->get("project/attributes/$attName");
+sub project_attribute {
+  (my MY $self, my ($attName, @default)) = @_;
+  $self->get("project/attributes/$attName", @default);
 }
 
 sub get {
-  (my MY $self, my $entry) = @_;
-  if ($self->{mock_dir}) {
-    $self->cli_read_file($self->{mock_dir}.$entry);
-  } else {
-    $self->{_cache}{$entry} //= do {
+  (my MY $self, my ($entry, @default)) = @_;
+  $self->{_cache}{$entry} //= do {
+    if ($self->{mock_dir}) {
+      my $fn = $self->{mock_dir}.$entry;
+      if (-e $fn) {
+        $self->cli_read_file($fn);
+      } elsif (@default) {
+        $default[0];
+      } else {
+        Carp::croak "Can't read from mocked metadata: $fn";
+      }
+    } else {
       my $url = $self->{prefix}.$self->{location}.$entry;
-      $self->furl_get($url, [@{$self->{header}}]);
-    };
-  }
+      my ($data, $err) = $self->furl_get($url, [@{$self->{header}}]);
+      if (not $err) {
+        $data;
+      } elsif (@default) {
+        $default[0]
+      } else {
+        Carp::croak $err;
+      }
+    }
+  };
 }
 
 sub furl_get {
   (my MY $self, my @rest) = @_;
   my $res = Furl->new->get(@rest);
   if ($res->is_success) {
-    return $res->content;
+    ($res->content, undef);
   } else {
-    die $res->status_line;
+    (undef, $res->status_line);
   }
 }
 

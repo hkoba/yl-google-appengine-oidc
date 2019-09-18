@@ -31,7 +31,7 @@ use Redis::Fast;
     use_sibling_config_dir => 1,
     # config_dir => "$app_root.config.d",
     session_store => [RedisFast => redis => Redis::Fast->new(
-      server => $metadata->attribute("session_redis"),
+      server => $metadata->project_attribute("session_redis"),
     )],
   );
 
