@@ -1,4 +1,5 @@
 <!yatt:args state code authuser prompt session_state error
+            scope
             error_description
             >
 &yatt:session_start();
