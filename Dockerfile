@@ -25,6 +25,8 @@ RUN cpm install -g --with-recommends --with-suggests \
 ADD . /app
 WORKDIR /app
 
+RUN ./addon/ensure_symlinks.pl
+
 #----------------------------------------
 
 # since latest YATT::Lite is not yet released on CPAN, we neeed to do this.
