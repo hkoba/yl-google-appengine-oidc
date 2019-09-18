@@ -37,5 +37,10 @@ RUN cpm install -g --cpanfile=/app/lib/YATT/cpanfile --with-recommends
 RUN cpm install -g
 
 #----------------------------------------
+# Make sure index is visible at build time
+
+RUN lib/YATT/script/yatt.lint public/index.yatt
+
+#----------------------------------------
 
 CMD ["starman", "--port=8080"]
