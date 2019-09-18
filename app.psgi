@@ -25,14 +25,23 @@ use Redis::Fast;
   my $config_dir = "$app_root.config.d";
   my $metadata = Metadata->instance(mock_dir => "$config_dir/metadata");
 
+  my $session_store = do {
+    if (my $server = $metadata->project_attribute("session_redis", undef)) {
+      [RedisFast => redis => Redis::Fast->new(
+        server => $server,
+      )];
+    } else {
+      require CHI;
+      [Cache => cache => CHI->new(driver => 'Memory', global => 1)]
+    }
+  };
+
   my MY $site = MY->load_factory_for_psgi(
     $0,
     doc_root => "$app_root/public",
     use_sibling_config_dir => 1,
     # config_dir => "$app_root.config.d",
-    session_store => [RedisFast => redis => Redis::Fast->new(
-      server => $metadata->project_attribute("session_redis"),
-    )],
+    session_store => $session_store,
   );
 
   if (-d (my $staticDir = "$app_root/static")) {

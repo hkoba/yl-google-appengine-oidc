@@ -39,8 +39,8 @@ Entity metadata => sub {
 Entity oidc => sub {
   my ($this) = @_;
   $CON->stash->{oidc} //= do {
-    my $client_id = $this->entity_project_client_id;
-    my $client_secret = $this->entity_project_client_secret;
+    my $client_id = $this->entity_project_oauth_client_id;
+    my $client_secret = $this->entity_project_oauth_client_secret;
     YATT_Helper::OIDC::Provider::Google->new(
       client_id => $client_id,
       client_secret => $client_secret,

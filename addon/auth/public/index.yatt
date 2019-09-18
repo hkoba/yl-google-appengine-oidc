@@ -14,7 +14,7 @@
 
   <form action="authorize">
     <button type="submit" class="btn btn-primary">
-      
+      Login with Google account
     </button>
   </form>
 
