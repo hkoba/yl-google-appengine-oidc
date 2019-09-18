@@ -1,0 +1,1 @@
+../../addon/auth/lib/YATT_Addon/Google.pm

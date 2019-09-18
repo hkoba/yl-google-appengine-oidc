@@ -14,7 +14,7 @@ use YATT::Lite::WebMVC0::SiteApp -as_base;
 use YATT::Lite qw/Entity *CON/;
 use YATT::Lite::WebMVC0::Partial::Session2 -as_base;
 
-use YATT_Helper::Google::Metadata [as => 'Metadata'];
+use YATT_Addon::Google -entns;
 
 use Plack::Session::State::Cookie;
 use Plack::Session::Store::RedisFast;
