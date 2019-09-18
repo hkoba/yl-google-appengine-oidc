@@ -6,14 +6,22 @@ use utf8;
 
 use MOP4Import::Base::CLI_JSON -as_base,
   [fields =>
+   qw/_cache/,
+   [mock_dir => doc => "Use local files in this dir if it exists instead of metadata server"],
    [prefix => default => 'http://metadata'],
-   [port_suffix => default => ''],
    [location => default => '/computeMetadata/v1/'],
    [header => default => [qw/Metadata-Flavor Google/]],
  ];
 
 use Furl;
 use IO::Socket::SSL;
+
+sub onconfigure_mock_dir {
+  (my MY $self, my $mock_dir) = @_;
+  return unless -d $mock_dir;
+  $mock_dir =~ s,/*\z,/,;
+  $self->{mock_dir} = $mock_dir;
+}
 
 sub attribute {
   (my MY $self, my $attName) = @_;
@@ -22,8 +30,14 @@ sub attribute {
 
 sub get {
   (my MY $self, my $entry) = @_;
-  my $url = $self->{prefix}.$self->{port_suffix}.$self->{location}.$entry;
-  $self->furl_get($url, [@{$self->{header}}]);
+  if ($self->{mock_dir}) {
+    $self->cli_read_file($self->{mock_dir}.$entry);
+  } else {
+    $self->{_cache}{$entry} //= do {
+      my $url = $self->{prefix}.$self->{location}.$entry;
+      $self->furl_get($url, [@{$self->{header}}]);
+    };
+  }
 }
 
 sub furl_get {
