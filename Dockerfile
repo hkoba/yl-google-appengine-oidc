@@ -32,4 +32,8 @@ RUN cpm install -g --cpanfile=/app/lib/YATT/cpanfile --with-recommends
 
 #----------------------------------------
 
+RUN cpm install -g
+
+#----------------------------------------
+
 CMD ["starman", "--port=8080"]
