@@ -39,7 +39,7 @@ RUN cpm install -g
 #----------------------------------------
 # Make sure index is visible at build time
 
-RUN lib/YATT/script/yatt.lint public/index.yatt
+RUN lib/YATT/scripts/yatt.lint public/index.yatt
 
 #----------------------------------------
 
