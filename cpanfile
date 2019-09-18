@@ -8,3 +8,4 @@ requires 'IO::Socket::SSL';
 
 requires 'OIDC::Lite';
 requires 'Crypt::OpenSSL::Random';
+requires 'LWP::Protocol::https';
