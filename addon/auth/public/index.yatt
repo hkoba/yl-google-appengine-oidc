@@ -1,12 +1,63 @@
 <!yatt:args nx>
+<yatt:if "not &yatt:project_admin(=undef);">
+  <yatt:please_add_admin/>
+<:yatt:else if="not &yatt:project_oauth_client_id(=undef);"/>
+  <yatt:please_add_client_id />
+
+<:yatt:else/>
+  <yatt:login nx/>
+</yatt:if>
+
+<!yatt:widget login nx>
 <yatt:layout>
   <h2>Please login</h2>
 
   <form action="authorize">
     <button type="submit" class="btn btn-primary">
-      ダミーでログイン
+      
     </button>
   </form>
 
 </yatt:layout>
 
+<!yatt:widget please_add_admin>
+<yatt:layout>
+  <h2>Please add admin</h2>
+
+  You need to set admin to metadata, like below:
+
+  <pre>
+    gcloud compute project-info add-metadata --metadata admin=YOUR_EMAIL
+  </pre>
+
+  <yatt:metadata_manual/>
+
+</yatt:layout>
+
+<!yatt:widget please_add_client_id>
+<yatt:layout>
+  <h2>Please add client_id and client_secret to use Google Auth</h2>
+
+
+  <pre>
+    gcloud compute project-info add-metadata --metadata oauth_client_id=...,oauth_client_secret=...
+  </pre>
+  <ul>
+  <li><a target="_" href="https://console.developers.google.com/apis/credentials">Google API Console</a></li>
+  <li><a href="https://developers.google.com/identity/protocols/OpenIDConnect">OpenID Connect manual</a></li>
+  </ul>
+
+  <hr>
+
+  <yatt:metadata_manual/>
+
+</yatt:layout>
+
+<!yatt:widget metadata_manual>
+See GCP manuals:
+<yatt:link href="https://cloud.google.com/compute/docs/storing-retrieving-metadata#projectwide"/><br>
+
+<yatt:link href="https://cloud.google.com/sdk/gcloud/reference/compute/project-info/add-metadata"/>
+
+<!yatt:widget link href>
+<a href="&yatt:href;">&yatt:href;</a>
