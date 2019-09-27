@@ -5,7 +5,7 @@ use warnings;
 use File::Spec;
 use File::Basename;
 use File::Find;
-use File::Path qw/make_path/;
+use File::Path qw/make_path remove_tree/;
 
 use autodie;
 
@@ -43,6 +43,9 @@ use autodie;
     my $srcFn = "addon/$addon/public";
     my $dstFn = "public/$addon";
     next if -l $dstFn and -r $dstFn;
+    if (-d $dstFn) {
+      remove_tree $dstFn, +{verbose => 1};
+    }
     system "ln", "-vnsfr", $srcFn, $dstFn;
   }
 
