@@ -1,0 +1,35 @@
+#!/usr/bin/env perl
+use strict;
+use warnings FATAL => qw(all);
+use sigtrap die => qw(normal-signals);
+
+use FindBin;
+use lib "$FindBin::Bin/lib", "$FindBin::Bin/local/lib/perl5";
+
+use Plack::Runner;
+
+use FCGI;
+
+{
+
+  chdir($FindBin::Bin) or die "Can't chdir to $FindBin::Bin: $!";
+
+  my $sockfile = "$FindBin::Bin/var/run/fcgi.sock";
+  my $appname = 'app.psgi';
+
+
+  my @default = (
+    qw(-s FCGI
+       --keep-stderr 1
+       --nproc 2
+    )
+    , '--listen' => $sockfile
+    , '--proc-title' => $0
+  );
+
+  my $runner = Plack::Runner->new;
+
+  $runner->parse_options(@default, @ARGV, $appname);
+
+  $runner->run;
+}
