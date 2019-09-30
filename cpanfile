@@ -1,6 +1,4 @@
-requires 'Redis::Fast';
-requires 'Plack::Session::Store::RedisFast';
-
+requires 'MOP4Import::Declare', '>= 0.050';
 requires 'CHI';
 
 requires 'Furl';

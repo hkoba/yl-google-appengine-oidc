@@ -17,8 +17,6 @@ use YATT::Lite::WebMVC0::Partial::Session2 -as_base;
 use YATT_Addon::Google -entns;
 
 use Plack::Session::State::Cookie;
-use Plack::Session::Store::RedisFast;
-use Redis::Fast;
 
 {
   my $app_root = $FindBin::Bin;
@@ -26,14 +24,8 @@ use Redis::Fast;
   my $metadata = Metadata->instance(mock_dir => "$config_dir/metadata");
 
   my $session_store = do {
-    if (my $server = $metadata->project_attribute("session_redis", undef)) {
-      [RedisFast => redis => Redis::Fast->new(
-        server => $server,
-      )];
-    } else {
-      require CHI;
-      [Cache => cache => CHI->new(driver => 'Memory', global => 1)]
-    }
+    require CHI;
+    [Cache => cache => CHI->new(driver => 'File', root_dir => "$app_root/var/db")]
   };
 
   unless (-w (my $dir = $session_store->[-1]->root_dir."/Default")) {
