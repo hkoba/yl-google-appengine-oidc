@@ -8,6 +8,8 @@ return sub {
   my $session = $this->entity_psgix_session;
 
   $oidc->set_provider_access_token($session, undef);
+  
+  delete $session->{login};# XXX: 本当は session を開放するほうが良い
 
   my $nx = $CON->param('nx');
 
