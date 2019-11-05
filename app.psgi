@@ -36,6 +36,10 @@ use Redis::Fast;
     }
   };
 
+  unless (-w (my $dir = $session_store->[-1]->root_dir."/Default")) {
+    Carp::croak "Session store is not writable!: $dir";
+  }
+
   my MY $site = MY->load_factory_for_psgi(
     $0,
     doc_root => "$app_root/public",
@@ -43,6 +47,18 @@ use Redis::Fast;
     # config_dir => "$app_root.config.d",
     session_store => $session_store,
   );
+
+  $site->examine_site_config;
+
+  Entity config_dir => sub {
+    my ($this) = @_;
+    $site->cget('config_dir');
+  };
+
+  Entity has_config_path => sub {
+    my ($this, $path) = @_;
+    -e ($this->entity_config_dir . "/$path");
+  };
 
   if (-d (my $staticDir = "$app_root/static")) {
     $site->mount_static("/static" => $staticDir);

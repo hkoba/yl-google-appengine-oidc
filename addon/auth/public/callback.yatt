@@ -55,11 +55,26 @@
   </yatt:error>
 </yatt:return>
 
-&yatt:oidc:set_provider_access_token(:psgix_session(),:token);
+<yatt:if "&yatt:psgix_session(){login_hint};">
+  <yatt:my id_token:value="&yatt:oidc:parse_id_token(:token:id_token());"
+           payload:value="&yatt:id_token:payload();"
+           />
 
-<?perl
- $this->entity_psgix_session->{login} = 'ok';
- ?>
+  <yatt:if "&yatt:payload{email}; ne &yatt:psgix_session(){login_hint};">
+    <yatt:return>
+      <yatt:error>
+        Email doesn't match with login_hint.
+      </yatt:error>
+    </yatt:return>
+    <:yatt:else/>
+    <?perl
+     $this->entity_psgix_session->{login} = $this->entity_psgix_session->{login_hint};
+    ?>
+  </yatt:if>
+  
+</yatt:if>
+
+&yatt:oidc:set_provider_access_token(:psgix_session(),:token);
 
 <yatt:layout>
 

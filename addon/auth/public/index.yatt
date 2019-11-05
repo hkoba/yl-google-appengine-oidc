@@ -10,13 +10,19 @@
 
 <!yatt:widget login nx>
 <yatt:layout>
-  <h2>Please login</h2>
 
-  <form action="authorize">
+  <div class="container">
+
+  <h2>&yatt:myorg_name; のアカウント名を入力してログインへ進んで下さい</h2>
+
+  <form class="form" action="authorize">
+    <input type="text" name="account" pattern="\w+" placeholder="&yatt:myorg_name; のアカウント名">
     <button type="submit" class="btn btn-primary">
-      Login with Google account
+      Login
     </button>
   </form>
+
+  </div>
 
 </yatt:layout>
 

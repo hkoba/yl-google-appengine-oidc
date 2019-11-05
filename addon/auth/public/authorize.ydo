@@ -4,10 +4,28 @@ return sub {
   my ($this, $CON) = @_;
 
   my $oidc = $this->entity_oidc;
-
   # $this->raise_dump([redirect_uri => $oidc->redirect_uri]);
 
+  my $account = $CON->param('account')
+    or $CON->error_with_status(400, "Account is empty!");
+
+  $account =~ m{^\w+\z}
+    or $CON->error_with_status(400, "Account is empty!");
+
+  unless ($this->entity_has_config_path("/allowed_user_names/$account")) {
+    $CON->error_with_status(403, "Not allowed!");
+  }
+
   my $session = $this->entity_psgix_session;
-  my $url = $oidc->url_to_authorization($session);
+
+  my $email = $account.'@'.$this->entity_myorg_domain;
+
+  my @rest = (
+    login_hint => $email
+  );
+
+  $session->{login_hint} = $email;
+
+  my $url = $oidc->url_to_authorization($session, @rest);
   $CON->redirect(\$url); # For external redirect.
 };
