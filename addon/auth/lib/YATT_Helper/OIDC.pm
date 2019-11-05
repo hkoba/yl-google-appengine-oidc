@@ -63,15 +63,28 @@ sub state_to_authorization {
 }
 
 sub url_to_authorization {
-  (my MY $self, my $session) = @_;
+  (my MY $self, my ($session, @rest)) = @_;
 
   my $state = $self->state_to_authorization($session);
+
+  my @extra = do {
+    if ($self->{extra} or @rest) {
+      my %extra;
+      %extra = %{$self->{extra}} if $self->{extra};
+      while (my ($k, $v) = splice @rest, 0, 2) {
+        $extra{$k} = $v;
+      }
+      (extra => \%extra);
+    } else {
+      ();
+    }
+  };
 
   $self->client($self)->uri_to_redirect(
     redirect_uri => $self->redirect_uri
     , scope => $self->custom_scope($session)
     , state => $state
-    , ($self->{extra} ? (extra => $self->{extra}) : ())
+    , @extra
   );
 }
 
