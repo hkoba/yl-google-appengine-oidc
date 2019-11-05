@@ -54,6 +54,14 @@ use Redis::Fast;
     $CON->stash->{backend} //= $site->create_backend;
   };
 
+
+  use YATT_Helper::EmailRegexp qw/$EMAIL_PATTERN/;
+
+  Entity email_pattern => sub {
+    my ($this) = @_;
+    \ qq{"\\s*$EMAIL_PATTERN\\s*"};
+  };
+
   # To use yatt.lint, you must wrap Plack::Builder result with $site->wrapped_by.
   # Without this, yatt.lint can't find proper $yatt from anonymous sub.
 
