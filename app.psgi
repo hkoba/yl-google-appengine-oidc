@@ -23,6 +23,17 @@ use Plack::Session::State::Cookie;
   my $config_dir = "$app_root.config.d";
   my $metadata = Metadata->instance(mock_dir => "$config_dir/metadata");
 
+  my @cookie_opts = do {
+    if ((my $path = $FindBin::Bin) =~ s/\.webapp\z//) {
+      my $slashBarRoot = "/web/root";
+      $path =~ s{^$slashBarRoot}{};
+      (path => "$path/-/");
+    } else {
+      ();
+    }
+  };
+  # print STDERR "cookie_opts: @cookie_opts\n";
+
   my $session_store = do {
     require CHI;
     [Cache => cache => CHI->new(driver => 'File', root_dir => "$app_root/var/db")]
@@ -38,6 +49,7 @@ use Plack::Session::State::Cookie;
     use_sibling_config_dir => 1,
     # config_dir => "$app_root.config.d",
     session_store => $session_store,
+    session_state => [Cookie => @cookie_opts],
   );
 
   $site->examine_site_config;
