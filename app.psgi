@@ -39,8 +39,12 @@ use Plack::Session::State::Cookie;
     [Cache => cache => CHI->new(driver => 'File', root_dir => "$app_root/var/db")]
   };
 
-  unless (-w (my $dir = $session_store->[-1]->root_dir."/Default")) {
-    Carp::croak "Session store is not writable!: $dir";
+  {
+    my $dir = $session_store->[-1]->root_dir;
+    unless (-w $dir and (not -e "$dir/Default" or -w "$dir/Default")) {
+      Carp::croak "Session store is not writable!: $dir"
+        unless MY->want_object;
+    }
   }
 
   my MY $site = MY->load_factory_for_psgi(
