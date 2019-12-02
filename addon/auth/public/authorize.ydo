@@ -26,6 +26,10 @@ return sub {
 
   $session->{login_hint} = $email;
 
+  if (my $loc = $CON->param('nx')) {
+    $session->{next} = URI->new($loc, "https")->path;
+  }
+
   my $url = $oidc->url_to_authorization($session, @rest);
   $CON->redirect(\$url); # For external redirect.
 };

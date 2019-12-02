@@ -76,6 +76,16 @@
 
 &yatt:oidc:set_provider_access_token(:psgix_session(),:token);
 
+<yatt:if "&yatt:psgix_session(){next};">
+  <yatt:my nx:value="delete &yatt:psgix_session(){next};"/>
+  &yatt:redirect(:nx);
+  <:yatt:else />
+  <h2>OK</h2>
+  <a href="../">Top</a>
+</yatt:if>
+
+<!yatt:widget show_status token="value">
+
 <yatt:layout>
 
   <h2>Access token</h2>

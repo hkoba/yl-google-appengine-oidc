@@ -17,6 +17,7 @@
 
   <form class="form" action="authorize">
     <input type="text" name="account" pattern="\w+" placeholder="&yatt:myorg_name; のアカウント名">
+    &yatt:mkhidden(nx);
     <button type="submit" class="btn btn-primary">
       Login
     </button>
