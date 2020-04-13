@@ -3,7 +3,7 @@ use strict;
 sub declare_site_config_entity ($;$) {
   my ($name, $default) = @_;
   Entity $name => sub {
-    shift->site_config($name => $default);
+    shift->entity_site_config($name => $default);
   };
 }
 
